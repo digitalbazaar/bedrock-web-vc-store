@@ -39,7 +39,7 @@ import VerifiableCredentialStore from 'bedrock-web-vc-store';
 
 const remoteStorage = await getRemoteStorage({accountId: 'test'});
 
-const vcStore = new VerifiableCredentialStore({accountId: 'test', remoteStorage});
+const vcStore = new VerifiableCredentialStore({remoteStorage});
 
 await vcStore.insert({credential});
 ```

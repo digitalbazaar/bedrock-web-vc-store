@@ -15,11 +15,14 @@
     "url": "https://digitalbazaar.com"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "axios-mock-adapter": "^1.15.0",
     "bedrock": "^1.0.0",
     "bedrock-karma": "^1.0.0",
     "bedrock-test": "^2.0.0",
+    "bedrock-web-data-hub": "https://github.com/digitalbazaar/bedrock-web-data-hub#dev",
     "bedrock-web-mock-data-hub-storage": "https://github.com/digitalbazaar/bedrock-web-mock-data-hub-storage#dev",
+    "bedrock-web-store": "^1.1.1",
     "bedrock-web-vc-store": "file:.."
   }
 }

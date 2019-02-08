@@ -21,14 +21,12 @@
   "files": [
     "lib/"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "Verifiable",
     "Credential",
     "Query",
     "Linked Data"
   ],
-  "scripts": {
-  }
+  "scripts": {}
 }

@@ -1,7 +1,5 @@
 # Bedrock Web Verifiable Credentials Store _(bedrock-web-vc-store)_
 
-[![Build Status](https://travis-ci.org/digitalbazaar/bedrock-web-vc-store.png?branch=master)](https://travis-ci.org/digitalbazaar/bedrock-web-vc-store)
-
 > A Javascript library for storing Verifiable Credentials for Bedrock web apps
 
 ## Table of Contents
@@ -37,9 +35,9 @@ npm install
 import {getRemoteStorage} from 'bedrock-web-data-hub';
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 
-const remoteStorage = await getRemoteStorage({accountId: 'test'});
+const hub = await getRemoteStorage({accountId: 'test'});
 
-const vcStore = new VerifiableCredentialStore({remoteStorage});
+const vcStore = new VerifiableCredentialStore({hub});
 
 await vcStore.insert({credential});
 ```

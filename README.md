@@ -39,6 +39,8 @@ const hub = await getRemoteStorage({accountId: 'test'});
 
 const vcStore = new VerifiableCredentialStore({hub});
 
+vcStore.init(); // create necessary indexes
+
 await vcStore.insert({credential});
 ```
 

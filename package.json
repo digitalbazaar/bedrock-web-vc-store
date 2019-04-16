@@ -21,7 +21,9 @@
   "files": [
     "lib/"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "uuid-random": "^1.0.8"
+  },
   "keywords": [
     "Verifiable",
     "Credential",

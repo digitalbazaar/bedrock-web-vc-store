@@ -18,7 +18,7 @@
     "axios": "^0.18.0",
     "axios-mock-adapter": "^1.15.0",
     "bedrock": "^1.0.0",
-    "bedrock-karma": "^1.0.0",
+    "bedrock-karma": "^1.4.0",
     "bedrock-test": "^2.0.0",
     "bedrock-web-data-hub": "^1.0.1",
     "bedrock-web-kms": "^1.0.1",

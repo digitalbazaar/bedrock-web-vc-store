@@ -2,14 +2,19 @@
  * Copyright (c) 2018-2019 Digital Bazaar, Inc. All rights reserved.
  */
 import Pretender from 'pretender';
-import {DataHub, DataHubService} from 'bedrock-web-data-hub';
+import {EdvClient} from 'edv-client';
 import {MockStorage} from 'bedrock-web-mock-data-hub-storage';
 import {MockKmsService} from 'bedrock-web-mock-kms-http';
-import {AccountMasterKey, KmsService} from 'bedrock-web-kms';
+//import {KmsClient} from 'webkms-client';
+
+// FIXME: Very out of date, needs to be updated to work with
+// modern `edv-client` and `webkms-client`
 
 // TODO: add some static data to test against
 
 export async function init({mock = {}} = {}) {
+  throw new Error('FIXME: Out of date');
+
   const accountId = mock.accountId = 'test';
 
   // create mock server
@@ -38,31 +43,30 @@ export async function init({mock = {}} = {}) {
   // mock backend for KMS
   mock.kms = new MockKmsService({server});
 
-  // mock data hub storage
-  mock.dataHubStorage = new MockStorage({server, controller: accountId});
+  // mock edv storage
+  mock.edvStorage = new MockStorage({server, controller: accountId});
 
   // only init keys once
   if(!mock.keys) {
     // create mock keys
     mock.keys = {};
 
-    // account master key for using KMS
-    const secret = 'bcrypt of password';
-    const kmsService = new KmsService();
-    mock.keys.master = await AccountMasterKey.fromSecret(
-      {secret, accountId, kmsService, kmsPlugin: 'mock'});
-
-    // create KEK and HMAC keys for creating data hubs
-    mock.keys.kek = await mock.keys.master.generateKey({type: 'kek'});
-    mock.keys.hmac = await mock.keys.master.generateKey({type: 'hmac'});
+    // // account master key for using KMS
+    // const secret = 'bcrypt of password';
+    // const kmsService = new KmsService();
+    // mock.keys.master = await AccountMasterKey.fromSecret(
+    //   {secret, accountId, kmsService, kmsPlugin: 'mock'});
+    //
+    // // create KEK and HMAC keys for creating edvs
+    // mock.keys.kek = await mock.keys.master.generateKey({type: 'kek'});
+    // mock.keys.hmac = await mock.keys.master.generateKey({type: 'hmac'});
   }
 
   return mock;
 }
 
-export async function createDataHub({mock, primary = false} = {}) {
+export async function createEdv({mock, primary = false} = {}) {
   const controller = mock.accountId;
-  const dhs = new DataHubService();
   const {kek, hmac} = mock.keys;
   let config = {
     sequence: 0,
@@ -71,8 +75,8 @@ export async function createDataHub({mock, primary = false} = {}) {
     hmac: {id: hmac.id, algorithm: hmac.algorithm}
   };
   if(primary) {
-    config.primary = true;
+    config.referenceId = 'primary';
   }
-  config = await dhs.create({config});
-  return new DataHub({config, kek, hmac});
-};
+  config = await EdvClient.create({config});
+  return new EdvClient({config, kek, hmac});
+}

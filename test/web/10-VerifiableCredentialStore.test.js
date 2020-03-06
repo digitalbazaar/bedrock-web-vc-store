@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
  */
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 
@@ -15,17 +15,17 @@ describe('VerifiableCredentialStore', () => {
   before(async () => {
     mock = await init();
   });
-  
+
   after(async () => {
     mock.server.shutdown();
   });
-  
+
   it('should insert a credential', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
 
     const credential = await vcStore.insert({credential: AlumniCredential});
-    
+
     credential.should.be.an('object');
     credential.should.deep.equal(AlumniCredential);
   });
@@ -33,7 +33,7 @@ describe('VerifiableCredentialStore', () => {
   it('should get a credential', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-    
+
     await vcStore.insert({credential: AlumniCredential});
     const credential = await vcStore.get({id: AlumniCredential.id});
 
@@ -41,11 +41,10 @@ describe('VerifiableCredentialStore', () => {
     credential.should.deep.equal(AlumniCredential);
   });
 
-
   it('should find a credential using a string for type', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const type = 'AlumniCredential';
     const [credential] = await vcStore.find({type});
@@ -57,7 +56,7 @@ describe('VerifiableCredentialStore', () => {
   it('should find a credential using an array for type', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const type = ['AlumniCredential', 'VerifiableCredential'];
     const [credential] = await vcStore.find({type});
@@ -69,7 +68,7 @@ describe('VerifiableCredentialStore', () => {
   it('should fail to find a credential for a non-existent type', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const type = 'KingCredential';
     const results = await vcStore.find({type});
@@ -82,7 +81,7 @@ describe('VerifiableCredentialStore', () => {
   it('should find a credential for a given issuer', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'https://example.edu/issuers/565049';
     const [credential] = await vcStore.find({issuer});
@@ -94,7 +93,7 @@ describe('VerifiableCredentialStore', () => {
   it('should fail to find a credential for a non-existent issuer', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'did:example:1234';
     const results = await vcStore.find({issuer});
@@ -107,10 +106,10 @@ describe('VerifiableCredentialStore', () => {
   it('should query for an AlumniCredential with any issuer', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     // TODO: Change code to use spread operator when bedrock-karma is fixed
-    const newCred = Object.assign({}, AlumniCredential, {id: 'foo'})
+    const newCred = Object.assign({}, AlumniCredential, {id: 'foo'});
     await vcStore.insert({credential: newCred});
     const credentials = await vcStore.match({query: query.query1});
 
@@ -122,7 +121,7 @@ describe('VerifiableCredentialStore', () => {
   it('should query for an AlumniCredential for a specific issuer', async () => {
     const hub = await createDataHub({mock});
     const vcStore = new VerifiableCredentialStore({hub});
-  
+
     await vcStore.insert({credential: AlumniCredential});
     const credentials = await vcStore.match({query: query.query2});
 
@@ -137,7 +136,7 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: AlumniCredential});
     const result = await vcStore.delete({id: AlumniCredential.id});
     result.should.equal(true);
-    
+
     let err;
     try {
       await vcStore.get({id: AlumniCredential.id});

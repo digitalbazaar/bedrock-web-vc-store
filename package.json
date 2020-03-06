@@ -21,13 +21,16 @@
   "files": [
     "lib/"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "Verifiable",
     "Credential",
     "Query",
     "Linked Data"
   ],
-  "scripts": {}
+  "scripts": {},
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-digitalbazaar": "^2.3.0"
+  }
 }

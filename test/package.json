@@ -1,31 +1,24 @@
 {
   "name": "bedrock-web-vc-store-test",
   "version": "0.0.1-0",
-  "description": "Bedrock Web VC storage test",
   "private": true,
   "scripts": {
-    "test": "node --preserve-symlinks test.js test --framework karma"
-  },
-  "keywords": [
-    "bedrock"
-  ],
-  "author": {
-    "name": "Digital Bazaar, Inc.",
-    "email": "support@digitalbazaar.com",
-    "url": "https://digitalbazaar.com"
+    "test": "node --preserve-symlinks test.js test --framework karma",
+    "coverage-ci": "node --preserve-symlinks test.js test --framework karma"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.19.2",
     "axios-mock-adapter": "^1.15.0",
-    "bedrock": "^1.0.0",
-    "bedrock-karma": "^1.4.0",
-    "bedrock-test": "^2.0.0",
+    "bedrock": "^3.0.0",
+    "bedrock-karma": "^2.1.0",
+    "bedrock-test": "^5.0.0",
     "bedrock-web-data-hub": "^1.0.1",
     "bedrock-web-kms": "^1.0.1",
     "bedrock-web-mock-data-hub-storage": "^2.0.0",
     "bedrock-web-mock-kms-http": "^1.0.1",
     "bedrock-web-store": "^1.1.1",
     "bedrock-web-vc-store": "file:..",
+    "edv-client": "^2.6.0",
     "pretender": "^2.1.1"
   }
 }

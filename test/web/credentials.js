@@ -1,7 +1,8 @@
 /*!
  * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
+
+/* eslint-disable quotes, quote-props, max-len */
 
 // https://w3c.github.io/vc-data-model/#example-1-a-simple-example-of-a-verifiable-credential
 const AlumniCredential = {

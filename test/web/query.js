@@ -31,7 +31,6 @@ const query1 = {
   }]
 };
 
-
 const query2 = {
   type: 'QueryByExample',
   credentialQuery: [{

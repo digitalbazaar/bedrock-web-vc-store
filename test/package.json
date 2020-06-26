@@ -13,12 +13,12 @@
     "bedrock-karma": "^2.1.0",
     "bedrock-test": "^5.0.0",
     "bedrock-web-data-hub": "^1.0.1",
-    "bedrock-web-kms": "^1.0.1",
+    "bedrock-web-kms": "^2.0.0",
     "bedrock-web-mock-data-hub-storage": "^2.0.0",
-    "bedrock-web-mock-kms-http": "^1.0.1",
+    "bedrock-web-mock-kms-http": "^2.0.1",
     "bedrock-web-store": "^1.1.1",
     "bedrock-web-vc-store": "file:..",
-    "edv-client": "^2.6.0",
-    "pretender": "^2.1.1"
+    "edv-client": "^4.0.1",
+    "pretender": "^3.4.3"
   }
 }

@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 3.0.0 - 2021-03-26
+
+### Changed
+- **BREAKING**: Changed EDV indexing of credential documents.
+
 ## 2.0.0 - 2020-06-29
 
 ### Changed

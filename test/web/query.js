@@ -20,11 +20,11 @@ const query1 = {
       }*/
     },
     // Note: This credential can be self-issued here
-    /*
     trustedIssuer: [{
       required: true,
       issuer: 'urn:some:required:issuer'
     }],
+    /*
     issuerQuery: [<another query by example for a VC for the
       issuer if using delegated trust>]
     */

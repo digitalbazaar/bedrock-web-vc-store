@@ -56,26 +56,20 @@ describe('VerifiableCredentialStore', () => {
     content.should.deep.equal(AlumniCredential);
   });
 
-  it('should throw error when using an array for type to find credential',
-    async () => {
-      const hub = await mock.createEdv({keyResolver});
+  it.skip('should find a credential using an array for type', async () => {
+    const hub = await mock.createEdv({keyResolver});
 
-      const vcStore = new VerifiableCredentialStore({
-        edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({
+      edv: hub, invocationSigner});
 
-      await vcStore.insert({credential: AlumniCredential});
-      const type = ['AlumniCredential', 'VerifiableCredential'];
+    await vcStore.insert({credential: AlumniCredential});
+    const type = ['AlumniCredential', 'VerifiableCredential'];
 
-      let err;
-      try {
-        await vcStore.find({type});
-      } catch(e) {
-        err = e;
-      }
+    const [credential] = await vcStore.find({type});
 
-      should.exist(err);
-      err.message.should.equal('"type" as array is not implemented.');
-    });
+    credential.should.be.an('object');
+    credential.should.deep.equal(AlumniCredential);
+  });
 
   it('should fail to find a credential for a non-existent type', async () => {
     const hub = await mock.createEdv({keyResolver});

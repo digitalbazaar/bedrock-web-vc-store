@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 3.0.1 - 2021-05-
+## 3.0.1 - 2021-05-06
 
 ### Changed
 - Fix bug with `delete` function.

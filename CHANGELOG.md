@@ -1,5 +1,11 @@
 # bedrock-web-vc-store ChangeLog
 
+## 4.0.0 - 2021-05-13
+
+### Changed
+- **BREAKING**: Updates `find` params to now only accept `query`.
+- Updates `find` and `match` to now handle an array of `types`.
+
 ## 3.0.1 - 2021-05-06
 
 ### Changed

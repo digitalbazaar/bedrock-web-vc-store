@@ -1,18 +1,18 @@
 /*!
  * Copyright (c) 2018-2021 Digital Bazaar, Inc. All rights reserved.
  */
-import didContext from 'did-context';
-import didMethodKey from 'did-method-key';
-import {Ed25519VerificationKey2018}
-  from '@digitalbazaar/ed25519-verification-key-2018';
+import * as didKey from '@digitalbazaar/did-method-key';
+import {Ed25519Signature2020} from '@digitalbazaar/ed25519-signature-2020';
 import {EdvClient} from 'edv-client';
 import {MockHmac} from './mockHmac.js';
-import {MockInvoker} from './mockInvoker.js';
-import {MockKak} from './mockKak.js';
 import {MockStorage} from './mockStorage.js';
 import {MockServer} from './mockServer.js';
+import {securityLoader} from '@digitalbazaar/security-document-loader';
 
-const driver = didMethodKey.driver();
+const loader = securityLoader();
+const securityDocumentLoader = loader.build();
+
+const didKeyDriver = didKey.driver();
 export class TestMock {
   constructor(server = new MockServer()) {
     // create mock server
@@ -25,6 +25,9 @@ export class TestMock {
     this.keyStorage = new Map();
   }
   async init() {
+    const res = await this.createCapabilityAgent();
+    const kak = res.keyAgreementPair;
+    const capabilityAgent = res.capabilityAgent;
     // only init keys once
     // this is used for the edv controller's keys in the tests
     if(!this.keys) {
@@ -32,10 +35,10 @@ export class TestMock {
       this.keys = {};
 
       // this creates the same invocationSigner for each test.
-      this.invocationSigner = new MockInvoker();
+      this.invocationSigner = capabilityAgent.signer;
       // create KAK and HMAC keys for creating edvs
       // this creates the same keyAgreementKey for each test.
-      this.keys.keyAgreementKey = new MockKak();
+      this.keys.keyAgreementKey = kak;
       // the creates the same hmac for each test.
       this.keys.hmac = await MockHmac.create();
       // only store the KaK in the recipients' keyStorage.
@@ -48,25 +51,10 @@ export class TestMock {
         }
         throw new Error(`Key ${id} not found`);
       };
-      this.documentLoader = async url => {
-        if(url.startsWith('did:key:')) {
-          const id = url.replace('did:key:');
-          return {
-            contextUrl: null,
-            documentUrl: url,
-            document: this.keyResolver({id})
-          };
-        }
-        if(url === 'https://www.w3.org/ns/did/v1') {
-          return {
-            contextUrl: null,
-            documentUrl: url,
-            document: didContext.contexts.get('https://w3id.org/did/v0.11')
-          };
-        }
-      };
+      this.documentLoader = securityDocumentLoader;
     }
   }
+
   async createEdv({controller, referenceId, keyResolver} = {}) {
     const {keyAgreementKey, hmac} = this.keys;
     let config = {
@@ -82,20 +70,20 @@ export class TestMock {
       {config, url: 'http://localhost:9876/edvs'});
     return new EdvClient({id: config.id, keyAgreementKey, hmac, keyResolver});
   }
-  async createCapabilityAgent() {
-    const keyPair = await Ed25519VerificationKey2018.generate();
-    const didKey = await this.createKeyAgreementKey(keyPair);
-    keyPair.id = didKey.id;
-    return {capabilityAgent: new MockInvoker(keyPair), didKey};
-  }
-  async createKeyAgreementKey(keyMaterial) {
 
-    const didKey = keyMaterial ?
-      await driver.keyToDidDoc(keyMaterial) : await driver.generate();
-    const [kaK] = didKey.keyAgreement;
+  async createCapabilityAgent() {
+    const {methodFor} = await didKeyDriver.generate();
+    const capabilityInvocationKeyPair =
+      methodFor({purpose: 'capabilityInvocation'});
+    const capabilityAgent =
+      new Ed25519Signature2020({key: capabilityInvocationKeyPair});
+
+    const keyAgreementPair = methodFor({purpose: 'keyAgreement'});
     this.keyStorage.set(
-      didKey.id, {'@context': 'https://w3id.org/security/v2', kaK});
-    return didKey;
+      keyAgreementPair.id, keyAgreementPair.export({
+        publicKey: true, includeContext: true}));
+
+    return {capabilityAgent, keyAgreementPair};
   }
 }
 

@@ -15,6 +15,7 @@ describe('VerifiableCredentialStore', () => {
     await mock.init();
     invocationSigner = mock.invocationSigner;
     keyResolver = mock.keyResolver;
+    console.log(keyResolver, 'keyResolver');
   });
 
   after(async () => {
@@ -50,7 +51,7 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const type = 'AlumniCredential';
-    const [credential] = await vcStore.find({type});
+    const [credential] = await vcStore.find({query: {type}});
     const {content} = credential;
     content.should.be.an('object');
     content.should.deep.equal(AlumniCredential);
@@ -65,7 +66,7 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: AlumniCredential});
     const type = ['AlumniCredential', 'VerifiableCredential'];
 
-    const [credential] = await vcStore.find({type});
+    const [credential] = await vcStore.find({query: {type}});
 
     credential.should.be.an('object');
     credential.should.deep.equal(AlumniCredential);
@@ -78,7 +79,7 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const type = 'KingCredential';
-    const results = await vcStore.find({type});
+    const results = await vcStore.find({query: {type}});
     const [credential] = results;
 
     results.length.should.equal(0);
@@ -92,7 +93,7 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'https://example.edu/issuers/565049';
-    const [credential] = await vcStore.find({issuer});
+    const [credential] = await vcStore.find({query: {issuer}});
 
     const {content} = credential;
     content.should.be.an('object');
@@ -106,14 +107,14 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'did:example:1234';
-    const results = await vcStore.find({issuer});
+    const results = await vcStore.find({query: {issuer}});
     const [credential] = results;
 
     results.length.should.equal(0);
     should.not.exist(credential);
   });
 
-  it.skip('should query for an AlumniCredential with any issuer', async () => {
+  it('should query for an AlumniCredential with any issuer', async () => {
     const hub = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
@@ -126,11 +127,11 @@ describe('VerifiableCredentialStore', () => {
     const credentials = await vcStore.match({query: query.query1});
 
     credentials.length.should.equal(2);
-    credentials[0].should.deep.equal(AlumniCredential);
-    credentials[1].should.deep.equal(newCred);
+    credentials[0].content.should.deep.equal(AlumniCredential);
+    credentials[1].content.should.deep.equal(newCred);
   });
 
-  it.skip('should query for an AlumniCredential for a specific issuer',
+  it('should query for an AlumniCredential for a specific issuer',
     async () => {
       const hub = await mock.createEdv({keyResolver});
 
@@ -141,7 +142,7 @@ describe('VerifiableCredentialStore', () => {
       const credentials = await vcStore.match({query: query.query2});
 
       credentials.length.should.equal(1);
-      credentials[0].should.deep.equal(AlumniCredential);
+      credentials[0].content.should.deep.equal(AlumniCredential);
     });
 
   it('should delete an existing credential', async () => {

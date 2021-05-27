@@ -15,7 +15,6 @@ describe('VerifiableCredentialStore', () => {
     await mock.init();
     invocationSigner = mock.invocationSigner;
     keyResolver = mock.keyResolver;
-    console.log(keyResolver, 'keyResolver');
   });
 
   after(async () => {

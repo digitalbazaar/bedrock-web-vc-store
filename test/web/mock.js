@@ -1,83 +1,91 @@
 /*!
- * Copyright (c) 2018-2020 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2018-2021 Digital Bazaar, Inc. All rights reserved.
  */
-
-import Pretender from 'pretender';
+import * as didKey from '@digitalbazaar/did-method-key';
+import {Ed25519Signature2020} from '@digitalbazaar/ed25519-signature-2020';
 import {EdvClient} from 'edv-client';
-import {MockStorage} from 'bedrock-web-mock-data-hub-storage';
-import {MockKmsService} from 'bedrock-web-mock-kms-http';
-//import {KmsClient} from 'webkms-client';
+import {MockHmac} from './mockHmac.js';
+import {MockStorage} from './mockStorage.js';
+import {MockServer} from './mockServer.js';
+import {securityLoader} from '@digitalbazaar/security-document-loader';
 
-// FIXME: Very out of date, needs to be updated to work with
-// modern `edv-client` and `webkms-client`
+const loader = securityLoader();
+const securityDocumentLoader = loader.build();
 
-// TODO: add some static data to test against
+const didKeyDriver = didKey.driver();
+export class TestMock {
+  constructor(server = new MockServer()) {
+    // create mock server
+    this.server = server;
+    const accountId = this.accountId = 'test';
+    // mock edv storage
+    this.edvStorage = new MockStorage(
+      {server: this.server, controller: accountId});
+    // this is used to store recipient keys
+    this.keyStorage = new Map();
+  }
+  async init() {
+    const res = await this.createCapabilityAgent();
+    const kak = res.keyAgreementPair;
+    const capabilityAgent = res.capabilityAgent;
+    // only init keys once
+    // this is used for the edv controller's keys in the tests
+    if(!this.keys) {
+      // create mock keys
+      this.keys = {};
 
-export async function init({mock = {}} = {}) {
-  throw new Error('FIXME: Out of date');
-
-  const accountId = mock.accountId = 'test';
-
-  // create mock server
-  const server = mock.server = new Pretender();
-  // FIXME: there is special behavior here that the Mock* classes rely on;
-  // we need to clean that up
-  server.prepareHeaders = function prepareHeaders(headers) {
-    if(headers) {
-      if(headers.json) {
-        headers['content-type'] = 'application/json';
-        delete headers.json;
-      }
-    } else {
-      headers = {};
+      // this creates the same invocationSigner for each test.
+      this.invocationSigner = capabilityAgent.signer;
+      // create KAK and HMAC keys for creating edvs
+      // this creates the same keyAgreementKey for each test.
+      this.keys.keyAgreementKey = kak;
+      // the creates the same hmac for each test.
+      this.keys.hmac = await MockHmac.create();
+      // only store the KaK in the recipients' keyStorage.
+      this.keyStorage.set(
+        this.keys.keyAgreementKey.id, this.keys.keyAgreementKey);
+      this.keyResolver = ({id}) => {
+        const key = this.keyStorage.get(id);
+        if(key) {
+          return key;
+        }
+        throw new Error(`Key ${id} not found`);
+      };
+      this.documentLoader = securityDocumentLoader;
     }
-    return headers;
-  };
-  server.prepareBody = function prepareBody(body, headers) {
-    if(headers && headers['content-type'] === 'application/json') {
-      return (body && typeof body !== 'string') ?
-        JSON.stringify(body) : '{"message": "mock server error"}';
-    }
-    return body;
-  };
-
-  // mock backend for KMS
-  mock.kms = new MockKmsService({server});
-
-  // mock edv storage
-  mock.edvStorage = new MockStorage({server, controller: accountId});
-
-  // only init keys once
-  if(!mock.keys) {
-    // create mock keys
-    mock.keys = {};
-
-    // // account master key for using KMS
-    // const secret = 'bcrypt of password';
-    // const kmsService = new KmsService();
-    // mock.keys.master = await AccountMasterKey.fromSecret(
-    //   {secret, accountId, kmsService, kmsPlugin: 'mock'});
-    //
-    // // create KEK and HMAC keys for creating edvs
-    // mock.keys.kek = await mock.keys.master.generateKey({type: 'kek'});
-    // mock.keys.hmac = await mock.keys.master.generateKey({type: 'hmac'});
   }
 
-  return mock;
+  async createEdv({controller, referenceId, keyResolver} = {}) {
+    const {keyAgreementKey, hmac} = this.keys;
+    let config = {
+      sequence: 0,
+      controller: controller || this.invocationSigner.id,
+      keyAgreementKey: {id: keyAgreementKey.id, type: keyAgreementKey.type},
+      hmac: {id: hmac.id, type: hmac.type}
+    };
+    if(referenceId) {
+      config.referenceId = referenceId;
+    }
+    config = await EdvClient.createEdv(
+      {config, url: 'http://localhost:9876/edvs'});
+    return new EdvClient({id: config.id, keyAgreementKey, hmac, keyResolver});
+  }
+
+  async createCapabilityAgent() {
+    const {methodFor} = await didKeyDriver.generate();
+    const capabilityInvocationKeyPair =
+      methodFor({purpose: 'capabilityInvocation'});
+    const capabilityAgent =
+      new Ed25519Signature2020({key: capabilityInvocationKeyPair});
+
+    const keyAgreementPair = methodFor({purpose: 'keyAgreement'});
+    this.keyStorage.set(
+      keyAgreementPair.id, keyAgreementPair.export({
+        publicKey: true, includeContext: true}));
+
+    return {capabilityAgent, keyAgreementPair};
+  }
 }
 
-export async function createEdv({mock, primary = false} = {}) {
-  const controller = mock.accountId;
-  const {kek, hmac} = mock.keys;
-  let config = {
-    sequence: 0,
-    controller,
-    kek: {id: kek.id, algorithm: kek.algorithm},
-    hmac: {id: hmac.id, algorithm: hmac.algorithm}
-  };
-  if(primary) {
-    config.referenceId = 'primary';
-  }
-  config = await EdvClient.create({config});
-  return new EdvClient({config, kek, hmac});
-}
+const singleton = new TestMock();
+export default singleton;

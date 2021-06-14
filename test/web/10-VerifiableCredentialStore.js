@@ -56,7 +56,7 @@ describe('VerifiableCredentialStore', () => {
     content.should.deep.equal(AlumniCredential);
   });
 
-  it.skip('should find a credential using an array for type', async () => {
+  it('should find a credential using an array for type', async () => {
     const hub = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({
@@ -64,11 +64,13 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const type = ['AlumniCredential', 'VerifiableCredential'];
+    const query = type.map(type => ({type}));
 
-    const [credential] = await vcStore.find({query: {type}});
+    const [credential] = await vcStore.find({query});
+    const {content} = credential;
 
-    credential.should.be.an('object');
-    credential.should.deep.equal(AlumniCredential);
+    content.should.be.an('object');
+    content.should.deep.equal(AlumniCredential);
   });
 
   it('should fail to find a credential for a non-existent type', async () => {

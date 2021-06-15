@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 4.0.0 - TBD
+## 4.0.0 - 2021-06-15
 
 ### Changed
 - **BREAKING**: Updates `find` API params to now only accept `query`.

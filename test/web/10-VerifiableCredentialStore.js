@@ -115,7 +115,7 @@ describe('VerifiableCredentialStore', () => {
     should.not.exist(credential);
   });
 
-  it('should query for an AlumniCredential with any issuer', async () => {
+  it('should not query for an AlumniCredential with any issuer', async () => {
     const hub = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
@@ -125,11 +125,10 @@ describe('VerifiableCredentialStore', () => {
     const newCred = Object.assign({}, AlumniCredential, {id: 'foo'});
     await vcStore.insert({credential: newCred});
 
+    // query with an issuer that is not the same as the issuer on the credential
     const credentials = await vcStore.match({query: query.query1});
 
-    credentials.length.should.equal(2);
-    credentials[0].content.should.deep.equal(AlumniCredential);
-    credentials[1].content.should.deep.equal(newCred);
+    credentials.length.should.equal(0);
   });
 
   it('should query for an AlumniCredential for a specific issuer',

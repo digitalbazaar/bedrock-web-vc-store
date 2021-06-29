@@ -115,7 +115,8 @@ describe('VerifiableCredentialStore', () => {
     should.not.exist(credential);
   });
 
-  it('should not query for an AlumniCredential with any issuer', async () => {
+  it('should not find credential when querying for an AlumniCredential' +
+    'with an issuer different from the issuer on the credential', async () => {
     const hub = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});

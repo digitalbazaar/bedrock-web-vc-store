@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 4.0.1 - 2021-TBD
+
+### Fixed
+- Fix `_query()` and tests.
+
 ## 4.0.0 - 2021-06-15
 
 ### Changed

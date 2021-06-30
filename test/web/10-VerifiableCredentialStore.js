@@ -4,7 +4,10 @@
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 import mock from './mock.js';
 import credentials from './credentials.js';
-import query from './query.js';
+import {
+  queryWithIncorrectTrustedIssuer,
+  queryWithCorrectTrustedIssuer
+} from './query.js';
 
 const {AlumniCredential} = credentials;
 
@@ -115,7 +118,7 @@ describe('VerifiableCredentialStore', () => {
     should.not.exist(credential);
   });
 
-  it('should not find credential when querying for an AlumniCredential' +
+  it('should not find credential when querying for an AlumniCredential ' +
     'with an issuer different from the issuer on the credential', async () => {
     const hub = await mock.createEdv({keyResolver});
 
@@ -127,24 +130,28 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: newCred});
 
     // query with an issuer that is not the same as the issuer on the credential
-    const credentials = await vcStore.match({query: query.query1});
+    const credentials = await vcStore.match({
+      query: queryWithIncorrectTrustedIssuer
+    });
 
     credentials.length.should.equal(0);
   });
 
-  it('should query for an AlumniCredential for a specific issuer',
-    async () => {
-      const hub = await mock.createEdv({keyResolver});
+  it('should find credential when querying for an AlumniCredential ' +
+    'with correct issuer', async () => {
+    const hub = await mock.createEdv({keyResolver});
 
-      const vcStore = new VerifiableCredentialStore({
-        edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({
+      edv: hub, invocationSigner});
 
-      await vcStore.insert({credential: AlumniCredential});
-      const credentials = await vcStore.match({query: query.query2});
-
-      credentials.length.should.equal(1);
-      credentials[0].content.should.deep.equal(AlumniCredential);
+    await vcStore.insert({credential: AlumniCredential});
+    const credentials = await vcStore.match({
+      query: queryWithCorrectTrustedIssuer
     });
+
+    credentials.length.should.equal(1);
+    credentials[0].content.should.deep.equal(AlumniCredential);
+  });
 
   it('should delete an existing credential', async () => {
     const hub = await mock.createEdv({keyResolver});

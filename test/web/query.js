@@ -1,5 +1,5 @@
 
-const query1 = {
+const queryWithIncorrectTrustedIssuer = {
   type: 'QueryByExample',
   credentialQuery: [{
     required: true,
@@ -22,7 +22,7 @@ const query1 = {
     // Note: This credential can be self-issued here
     trustedIssuer: [{
       required: true,
-      issuer: 'urn:some:required:issuer'
+      issuer: 'urn:some:incorrect:issuer'
     }],
     /*
     issuerQuery: [<another query by example for a VC for the
@@ -31,7 +31,7 @@ const query1 = {
   }]
 };
 
-const query2 = {
+const queryWithCorrectTrustedIssuer = {
   type: 'QueryByExample',
   credentialQuery: [{
     required: true,
@@ -63,7 +63,7 @@ const query2 = {
   }]
 };
 
-export default {
-  query1,
-  query2
+export {
+  queryWithIncorrectTrustedIssuer,
+  queryWithCorrectTrustedIssuer
 };

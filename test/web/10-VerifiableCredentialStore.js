@@ -4,10 +4,7 @@
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 import mock from './mock.js';
 import credentials from './credentials.js';
-import {
-  queryWithIncorrectTrustedIssuer,
-  queryWithCorrectTrustedIssuer
-} from './query.js';
+import {queryWithMatchingTrustedIssuer} from './query.js';
 
 const {AlumniCredential} = credentials;
 
@@ -129,16 +126,22 @@ describe('VerifiableCredentialStore', () => {
     const newCred = Object.assign({}, AlumniCredential, {id: 'foo'});
     await vcStore.insert({credential: newCred});
 
-    // query with an issuer that is not the same as the issuer on the credential
+    const queryWithNonMatchingTrustedIssuer =
+      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
+    // Intentionally change the trustedIsser to a non matching one.
+    queryWithNonMatchingTrustedIssuer.credentialQuery[0].trustedIssuer = [{
+      required: true,
+      issuer: 'urn:some:unmatching:issuer'
+    }];
     const credentials = await vcStore.match({
-      query: queryWithIncorrectTrustedIssuer
+      query: queryWithNonMatchingTrustedIssuer
     });
 
     credentials.length.should.equal(0);
   });
 
   it('should find credential when querying for an AlumniCredential ' +
-    'with correct issuer', async () => {
+    'with a matching issuer', async () => {
     const hub = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({
@@ -146,7 +149,27 @@ describe('VerifiableCredentialStore', () => {
 
     await vcStore.insert({credential: AlumniCredential});
     const credentials = await vcStore.match({
-      query: queryWithCorrectTrustedIssuer
+      query: queryWithMatchingTrustedIssuer
+    });
+
+    credentials.length.should.equal(1);
+    credentials[0].content.should.deep.equal(AlumniCredential);
+  });
+
+  it('should find credential when querying for an AlumniCredential ' +
+    'with any issuer', async () => {
+    const hub = await mock.createEdv({keyResolver});
+
+    const vcStore = new VerifiableCredentialStore({
+      edv: hub, invocationSigner});
+
+    await vcStore.insert({credential: AlumniCredential});
+    const queryWithoutTrustedIssuer =
+      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
+    delete queryWithoutTrustedIssuer.credentialQuery[0].trustedIssuer;
+
+    const credentials = await vcStore.match({
+      query: queryWithoutTrustedIssuer
     });
 
     credentials.length.should.equal(1);

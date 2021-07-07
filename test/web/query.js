@@ -20,7 +20,6 @@ const queryWithMatchingTrustedIssuer = {
     },
     // Note: This credential can be self-issued here
     trustedIssuer: [{
-      required: true,
       issuer: 'https://example.edu/issuers/565049'
     }],
     /*

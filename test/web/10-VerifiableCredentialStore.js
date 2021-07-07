@@ -130,7 +130,6 @@ describe('VerifiableCredentialStore', () => {
       JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
     // Intentionally change the trustedIsser to a non matching one.
     queryWithNonMatchingTrustedIssuer.credentialQuery[0].trustedIssuer = [{
-      required: true,
       issuer: 'urn:some:unmatching:issuer'
     }];
     const credentials = await vcStore.match({

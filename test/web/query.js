@@ -20,7 +20,7 @@ const queryWithMatchingTrustedIssuer = {
     },
     // Note: This credential can be self-issued here
     trustedIssuer: [{
-      issuer: 'https://example.edu/issuers/565049'
+      id: 'https://example.edu/issuers/565049'
     }],
     /*
     issuerQuery: [<another query by example for a VC for the

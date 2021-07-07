@@ -139,6 +139,34 @@ describe('VerifiableCredentialStore', () => {
     credentials.length.should.equal(0);
   });
 
+  it('should throw error if "id" of a trustedIssuer is undefined', async () => {
+    const hub = await mock.createEdv({keyResolver});
+
+    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+
+    await vcStore.insert({credential: AlumniCredential});
+
+    const newCred = Object.assign({}, AlumniCredential, {id: 'foo'});
+    await vcStore.insert({credential: newCred});
+
+    const queryWithTrustedIssuerWithoutId =
+      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
+    queryWithTrustedIssuerWithoutId.credentialQuery[0].trustedIssuer = [{}];
+    let credentials;
+    let err;
+    try {
+      credentials = await vcStore.match({
+        query: queryWithTrustedIssuerWithoutId
+      });
+    } catch(e) {
+      err = e;
+    }
+
+    should.exist(err);
+    err.message.should.equal('trustedIssuer without an "id" is unsupported.');
+    should.not.exist(credentials);
+  });
+
   it('should find credential when querying for an AlumniCredential ' +
     'with a matching issuer', async () => {
     const hub = await mock.createEdv({keyResolver});

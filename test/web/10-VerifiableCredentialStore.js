@@ -163,7 +163,7 @@ describe('VerifiableCredentialStore', () => {
     }
 
     should.exist(err);
-    err.message.should.equal('trustedIssuer without an "id" is unsupported.');
+    err.name.should.equal('NotSupportedError');
     should.not.exist(credentials);
   });
 

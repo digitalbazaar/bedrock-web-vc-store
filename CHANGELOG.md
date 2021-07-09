@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 4.1.0 - 2021-07-TBD
+## 4.1.0 - 2021-07-09
 
 ### Changed
 - Throw `NotSupportedError` when trustedIssuer.id is undefined.

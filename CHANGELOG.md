@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 5.0.0 - TBD
+
+### Changed
+- **BREAKING**: Updates `get` API to return `content` and `meta`.
+
 ## 4.1.0 - 2021-07-09
 
 ### Changed

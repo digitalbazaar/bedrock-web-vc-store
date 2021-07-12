@@ -37,7 +37,8 @@ describe('VerifiableCredentialStore', () => {
     const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
-    const credential = await vcStore.get({id: AlumniCredential.id});
+    const record = await vcStore.get({id: AlumniCredential.id});
+    const credential = record.content;
 
     credential.should.be.an('object');
     credential.should.deep.equal(AlumniCredential);

@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 import mock from './mock.js';
@@ -22,8 +22,8 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should insert a credential', async () => {
-    const hub = await mock.createEdv({keyResolver});
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const edv = await mock.createEdv({keyResolver});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     const credential = await vcStore.insert({credential: AlumniCredential});
 
@@ -32,9 +32,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should get a credential', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const {content: credential} = await vcStore.get({id: AlumniCredential.id});
@@ -44,9 +44,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should find a credential using a string for type', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const type = 'AlumniCredential';
@@ -57,10 +57,10 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should find a credential using an array for type', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({
-      edv: hub, invocationSigner});
+      edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const type = ['AlumniCredential', 'VerifiableCredential'];
@@ -74,9 +74,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should fail to find a credential for a non-existent type', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const type = 'KingCredential';
@@ -88,9 +88,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should find a credential for a given issuer', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'https://example.edu/issuers/565049';
@@ -102,9 +102,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should fail to find a credential for a non-existent issuer', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const issuer = 'did:example:1234';
@@ -117,9 +117,9 @@ describe('VerifiableCredentialStore', () => {
 
   it('should not find credential when querying for an AlumniCredential ' +
     'with an issuer different from the issuer on the credential', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
 
@@ -140,9 +140,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should throw error if "id" of a trustedIssuer is undefined', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
 
@@ -169,10 +169,10 @@ describe('VerifiableCredentialStore', () => {
 
   it('should find credential when querying for an AlumniCredential ' +
     'with a matching issuer', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({
-      edv: hub, invocationSigner});
+      edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const credentials = await vcStore.match({
@@ -185,10 +185,10 @@ describe('VerifiableCredentialStore', () => {
 
   it('should find credential when querying for an AlumniCredential ' +
     'with any issuer', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
     const vcStore = new VerifiableCredentialStore({
-      edv: hub, invocationSigner});
+      edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
     const queryWithoutTrustedIssuer =
@@ -204,9 +204,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should delete an existing credential', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     await vcStore.insert({credential: AlumniCredential});
 
@@ -224,9 +224,9 @@ describe('VerifiableCredentialStore', () => {
   });
 
   it('should fail to delete a non-existent credential', async () => {
-    const hub = await mock.createEdv({keyResolver});
+    const edv = await mock.createEdv({keyResolver});
 
-    const vcStore = new VerifiableCredentialStore({edv: hub, invocationSigner});
+    const vcStore = new VerifiableCredentialStore({edv, invocationSigner});
 
     const result = await vcStore.delete({id: AlumniCredential.id});
     result.should.equal(false);

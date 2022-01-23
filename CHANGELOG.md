@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 5.1.0 - 2022-01-xx
+## 5.1.0 - 2022-01-23
 
 ### Added
 - Add ability to include a zcap with the authority to use an

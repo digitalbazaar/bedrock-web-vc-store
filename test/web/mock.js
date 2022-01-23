@@ -1,9 +1,9 @@
 /*!
- * Copyright (c) 2018-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2018-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import * as didKey from '@digitalbazaar/did-method-key';
 import {Ed25519Signature2020} from '@digitalbazaar/ed25519-signature-2020';
-import {EdvClient} from 'edv-client';
+import {EdvClient} from '@digitalbazaar/edv-client';
 import {MockHmac} from './mockHmac.js';
 import {MockStorage} from './mockStorage.js';
 import {MockServer} from './mockServer.js';
@@ -67,7 +67,7 @@ export class TestMock {
       config.referenceId = referenceId;
     }
     config = await EdvClient.createEdv(
-      {config, url: 'http://localhost:9876/edvs'});
+      {config, url: 'https://localhost:9876/edvs'});
     return new EdvClient({id: config.id, keyAgreementKey, hmac, keyResolver});
   }
 

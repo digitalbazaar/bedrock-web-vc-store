@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2020-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2020-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import {httpClient} from '@digitalbazaar/http-client';
 import sinon from 'sinon';
@@ -61,7 +61,6 @@ export class MockServer {
       return stub
         .withArgs(sinon.match(value => pathRegex.test(value)))
         .callsFake(async function(route, body) {
-
           const params = routeParams(path, route);
           const queryParams = (body && body.searchParams) ?
             body.searchParams : {};

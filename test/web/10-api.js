@@ -1,8 +1,7 @@
 /*!
- * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
-
-import {EdvClient} from 'edv-client';
+import {EdvClient} from '@digitalbazaar/edv-client';
 import VerifiableCredentialStore from 'bedrock-web-vc-store';
 const credentialStore = new VerifiableCredentialStore({
   edv: new EdvClient()

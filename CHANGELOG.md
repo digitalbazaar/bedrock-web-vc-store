@@ -1,5 +1,12 @@
 # bedrock-web-vc-store ChangeLog
 
+## 5.1.0 - 2022-01-xx
+
+### Added
+- Add ability to include a zcap with the authority to use an
+  EDV's `/documents` API when constructing a
+  `VerifiableCredentialStore` instance.
+
 ## 5.0.0 - 2021-07-12
 
 ### Changed

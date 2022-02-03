@@ -9,6 +9,7 @@
   be added in the future.
 - Add indexes on `meta.displayable`, `meta.parentId`, and `content.type` to
   enable more queries.
+- Add `upsert()` API for updating credentials based on `id`.
 
 ### Changed
 - **BREAKING**: The constructor for a `VerifiableCredentialStore` only

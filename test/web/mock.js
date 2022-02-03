@@ -11,8 +11,8 @@ import {securityLoader} from '@digitalbazaar/security-document-loader';
 
 const loader = securityLoader();
 const securityDocumentLoader = loader.build();
-
 const didKeyDriver = didKey.driver();
+
 export class TestMock {
   constructor(server = new MockServer()) {
     // create mock server
@@ -55,28 +55,36 @@ export class TestMock {
     }
   }
 
-  async createEdv({controller, referenceId, keyResolver} = {}) {
-    const {keyAgreementKey, hmac} = this.keys;
+  async createEdv() {
+    const {
+      invocationSigner, keyResolver,
+      keys: {hmac, keyAgreementKey}
+    } = this;
     let config = {
       sequence: 0,
-      controller: controller || this.invocationSigner.id,
+      controller: invocationSigner.id,
       keyAgreementKey: {id: keyAgreementKey.id, type: keyAgreementKey.type},
       hmac: {id: hmac.id, type: hmac.type}
     };
-    if(referenceId) {
-      config.referenceId = referenceId;
-    }
     config = await EdvClient.createEdv(
       {config, url: 'https://localhost:9876/edvs'});
-    return new EdvClient({id: config.id, keyAgreementKey, hmac, keyResolver});
+    return {
+      config,
+      edvClient: new EdvClient({
+        id: config.id, keyAgreementKey, hmac, keyResolver,
+        invocationSigner
+      })
+    };
   }
 
   async createCapabilityAgent() {
     const {methodFor} = await didKeyDriver.generate();
-    const capabilityInvocationKeyPair =
-      methodFor({purpose: 'capabilityInvocation'});
-    const capabilityAgent =
-      new Ed25519Signature2020({key: capabilityInvocationKeyPair});
+    const capabilityInvocationKeyPair = methodFor({
+      purpose: 'capabilityInvocation'
+    });
+    const capabilityAgent = new Ed25519Signature2020({
+      key: capabilityInvocationKeyPair
+    });
 
     const keyAgreementPair = methodFor({purpose: 'keyAgreement'});
     this.keyStorage.set(

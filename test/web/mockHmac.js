@@ -1,8 +1,9 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import crypto from 'isomorphic-webcrypto';
 import * as base64url from 'base64url-universal';
+
 const _secret = base64url.decode(
   '49JUNpuy7808NoTTbB0q8rgRuPSMyeqSswCnWKr0MF4');
 
@@ -31,12 +32,11 @@ export class MockHmac {
     const key = this.key;
     const signature = new Uint8Array(
       await crypto.subtle.sign(key.algorithm, key, data));
-    return base64url.encode(signature);
+    return signature;
   }
 
   async verify({data, signature}) {
     const key = this.key;
-    signature = base64url.decode(signature);
     return crypto.subtle.verify(key.algorithm, key, signature, data);
   }
 }

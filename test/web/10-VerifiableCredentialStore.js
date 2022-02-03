@@ -121,7 +121,7 @@ describe('VerifiableCredentialStore', () => {
     documents.length.should.equal(0);
   });
 
-  it.skip('should not find credential when querying for an AlumniCredential ' +
+  it('should not find credential when querying for an AlumniCredential ' +
     'with an issuer different from the issuer on the credential', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
@@ -131,6 +131,7 @@ describe('VerifiableCredentialStore', () => {
     const newCred = {...AlumniCredential, id: 'foo'};
     await vcStore.insert({credential: newCred});
 
+    // this is a VPR query
     const queryWithNonMatchingTrustedIssuer =
       JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
     // intentionally change the trustedIsser to a non matching one.
@@ -138,31 +139,34 @@ describe('VerifiableCredentialStore', () => {
       id: 'urn:some:unmatching:issuer'
     }];
 
-    // FIXME: use `convertVPRQuery` and `find`
-    const credentials = await vcStore.match({
-      query: queryWithNonMatchingTrustedIssuer
+    // convert VPR query into local queries
+    const {queries} = await vcStore.convertVPRQuery({
+      vprQuery: queryWithNonMatchingTrustedIssuer
     });
-
-    credentials.length.should.equal(0);
+    // run local queries
+    const results = await Promise.all(
+      queries.map(async query => vcStore.find({query})));
+    results[0].documents.length.should.equal(0);
   });
 
-  it.skip('should throw error if "id" of a trustedIssuer is undefined', async () => {
+  it('should throw error if "id" of a trustedIssuer is undefined', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
+    // insert VCs
     await vcStore.insert({credential: AlumniCredential});
-
     const newCred = {...AlumniCredential, id: 'foo'};
     await vcStore.insert({credential: newCred});
 
+    // this is a VPR query
     const queryWithTrustedIssuerWithoutId =
       JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
     queryWithTrustedIssuerWithoutId.credentialQuery[0].trustedIssuer = [{}];
-    let credentials;
+
     let err;
     try {
-      credentials = await vcStore.match({
-        query: queryWithTrustedIssuerWithoutId
+      await vcStore.convertVPRQuery({
+        vprQuery: queryWithTrustedIssuerWithoutId
       });
     } catch(e) {
       err = e;
@@ -170,39 +174,51 @@ describe('VerifiableCredentialStore', () => {
 
     should.exist(err);
     err.name.should.equal('NotSupportedError');
-    should.not.exist(credentials);
   });
 
-  it.skip('should find credential when querying for an AlumniCredential ' +
+  it('should find credential when querying for an AlumniCredential ' +
     'with a matching issuer', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     await vcStore.insert({credential: AlumniCredential});
-    const credentials = await vcStore.match({
-      query: queryWithMatchingTrustedIssuer
+
+    // convert VPR query into local queries
+    const {queries} = await vcStore.convertVPRQuery({
+      vprQuery: queryWithMatchingTrustedIssuer
     });
 
-    credentials.length.should.equal(1);
-    credentials[0].content.should.deep.equal(AlumniCredential);
+    // run local queries
+    const results = await Promise.all(
+      queries.map(async query => vcStore.find({query})));
+    results[0].documents.length.should.equal(1);
+    const {content: credential} = results[0].documents[0];
+    credential.should.deep.equal(AlumniCredential);
   });
 
-  it.skip('should find credential when querying for an AlumniCredential ' +
+  it('should find credential when querying for an AlumniCredential ' +
     'with any issuer', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     await vcStore.insert({credential: AlumniCredential});
+
+    // this is a VPR query
     const queryWithoutTrustedIssuer =
       JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
     delete queryWithoutTrustedIssuer.credentialQuery[0].trustedIssuer;
 
-    const credentials = await vcStore.match({
-      query: queryWithoutTrustedIssuer
+    // convert VPR query into local queries
+    const {queries} = await vcStore.convertVPRQuery({
+      vprQuery: queryWithoutTrustedIssuer
     });
 
-    credentials.length.should.equal(1);
-    credentials[0].content.should.deep.equal(AlumniCredential);
+    // run local queries
+    const results = await Promise.all(
+      queries.map(async query => vcStore.find({query})));
+    results[0].documents.length.should.equal(1);
+    const {content: credential} = results[0].documents[0];
+    credential.should.deep.equal(AlumniCredential);
   });
 
   it('should delete an existing credential', async () => {

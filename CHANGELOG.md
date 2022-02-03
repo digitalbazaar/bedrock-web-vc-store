@@ -1,5 +1,39 @@
 # bedrock-web-vc-store ChangeLog
 
+## 6.0.0 - 2022-02-xx
+
+### Added
+- Add `convertVPRQuery` helper to convert VPR queries into local queries that
+  can be passed to `find()`. The only VPR query type presently supported is
+  `QueryByExample`; the ability to register new conversion functions may
+  be added in the future.
+- Add indexes on `meta.displayable`, `meta.parentId`, and `content.type` to
+  enable more queries.
+
+### Changed
+- **BREAKING**: The constructor for a `VerifiableCredentialStore` only
+  takes one parameter now: `edvClient`. This interface must handle all
+  `capability` / `invocationSigner` related business internally (if
+  the edv client is for an HTTPS-based EDV.
+- **BREAKING**: The `insert()` API returns the entire EDV document holding
+  the VC.
+- **BREAKING**: The `get()` API returns the entire EDV document holding
+  the VC.
+- **BREAKING**: The `find()` API returns the entire EDV documents holding
+  the matching VCs.
+- **BREAKING**: Use named export `VerifiableCredentialStore` instead of
+  `default` export.
+
+### Removed
+- **BREAKING**: Removed the `match()` API. Instead, use `convertVPRQuery`
+  to convert a Verifiable Presentation Request query into a local query that
+  can be passed to `find()`. The results of `find()` can be run through
+  external custom selector code to determine the best match for the query
+  based on whatever algorithm the application calls for. This also simplifies
+  this module's purpose by not having it provide these algorithms or a way to
+  inject them into this module's functions to run internally; instead the new
+  design separates these concerns.
+
 ## 5.1.0 - 2022-01-23
 
 ### Added

@@ -7,7 +7,7 @@
   can be passed to `find()`. The only VPR query type presently supported is
   `QueryByExample`; the ability to register new conversion functions may
   be added in the future.
-- Add indexes on `meta.displayable`, `meta.bundle`, and `content.type` to
+- Add indexes on `meta.displayable`, `meta.parentId`, and `content.type` to
   enable more queries.
 - Add `upsert()` API for updating credentials based on `id`.
 

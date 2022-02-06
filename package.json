@@ -23,7 +23,9 @@
   "files": [
     "lib/"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "p-all": "^3.0.0"
+  },
   "keywords": [
     "Verifiable",
     "Credential",

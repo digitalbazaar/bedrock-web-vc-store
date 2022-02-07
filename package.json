@@ -24,6 +24,7 @@
     "lib/"
   ],
   "dependencies": {
+    "canonicalize": "^1.0.8",
     "p-all": "^3.0.0"
   },
   "keywords": [

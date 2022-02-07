@@ -1,11 +1,11 @@
 /*!
- * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 
 /* eslint-disable quotes, quote-props, max-len */
 
 // https://w3c.github.io/vc-data-model/#example-1-a-simple-example-of-a-verifiable-credential
-const AlumniCredential = {
+const alumniCredential = {
   // set the context, which establishes the special terms we will be using
   // such as 'issuer' and 'alumniOf'.
   "@context": [
@@ -44,5 +44,5 @@ const AlumniCredential = {
 };
 
 export default {
-  AlumniCredential
+  alumniCredential
 };

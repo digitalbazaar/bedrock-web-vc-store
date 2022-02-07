@@ -230,7 +230,7 @@ describe('VerifiableCredentialStore', () => {
     // then delete VC
     const result = await vcStore.delete({id: AlumniCredential.id});
     result.should.be.an('object');
-    result.should.have.keys(['deleted', 'doc']);
+    result.should.have.keys(['deleted', 'doc', 'bundle']);
     result.deleted.should.equal(true);
     result.doc.should.be.an('object');
     let err;
@@ -248,7 +248,7 @@ describe('VerifiableCredentialStore', () => {
     const vcStore = new VerifiableCredentialStore({edvClient});
     const result = await vcStore.delete({id: AlumniCredential.id});
     result.should.be.an('object');
-    result.should.have.keys(['deleted', 'doc']);
+    result.should.have.keys(['deleted', 'doc', 'bundle']);
     result.deleted.should.equal(false);
   });
 });

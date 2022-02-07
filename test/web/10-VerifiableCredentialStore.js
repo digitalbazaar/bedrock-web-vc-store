@@ -306,6 +306,242 @@ describe('VerifiableCredentialStore', () => {
     const {content: credential} = doc;
     credential.should.deep.equal(alumniCredential);
   });
+
+  it('should fail to upsert non-array bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+    let err;
+    try {
+      await vcStore.upsert({
+        credential: alumniCredential,
+        bundleContents: false
+      });
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('TypeError');
+  });
+
+  it('should fail to upsert non-array of objects bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+    let err;
+    try {
+      await vcStore.upsert({
+        credential: alumniCredential,
+        bundleContents: [false]
+      });
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('TypeError');
+  });
+
+  it('should upsert a bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+  });
+
+  it('should delete a bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    const result = await vcStore.delete({id: doc.content.id});
+    should.exist(result);
+    result.should.have.keys(['deleted', 'doc', 'bundle']);
+    should.exist(result.deleted);
+    result.deleted.should.equal(true);
+    should.exist(result.doc);
+    result.doc.should.be.an('object');
+    should.exist(result.doc.content);
+    result.doc.content.should.deep.equal(alumniCredential);
+    should.exist(result.bundle);
+    result.bundle.should.be.an('object');
+    result.bundle.should.have.keys(['id', 'contents']);
+    should.exist(result.bundle.id);
+    result.bundle.id.should.equal(doc.content.id);
+    should.exist(result.bundle.contents);
+    result.bundle.contents.should.be.an('array');
+    result.bundle.contents.length.should.equal(1);
+    should.exist(result.bundle.contents[0]);
+    result.bundle.contents[0].should.be.an('object');
+    result.bundle.contents[0].should.have.keys(['doc']);
+    should.exist(result.bundle.contents[0].doc);
+    result.bundle.contents[0].doc.should.be.an('object');
+    should.exist(result.bundle.contents[0].doc.content);
+    result.bundle.contents[0].doc.content.should.deep.equal(subCredential);
+  });
+
+  it('should fail to delete a member of an existing bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    let err;
+    try {
+      await vcStore.delete({id: subCredential.id});
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('ConstraintError');
+    err.message.should.equal(
+      'Cannot delete credential; all other credentials that bundle it ' +
+      'must be deleted first.');
+  });
+
+  it('should force delete a member of an existing bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    const result = await vcStore.delete({id: subCredential.id, force: true});
+    should.exist(result);
+    result.should.have.keys(['deleted', 'doc', 'bundle']);
+    should.exist(result.deleted);
+    result.deleted.should.equal(true);
+    should.exist(result.doc);
+    result.doc.should.be.an('object');
+    should.exist(result.doc.content);
+    result.doc.content.should.deep.equal(subCredential);
+    should.not.exist(result.bundle);
+  });
+
+  it('should fail to delete a credential w/o its bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    let err;
+    try {
+      await vcStore.delete({id: alumniCredential.id, deleteBundle: false});
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('ConstraintError');
+    err.message.should.equal(
+      'Cannot delete credential; other credentials are bundled by it.');
+  });
+
+  it('should force delete a member of an existing bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    const result = await vcStore.delete({
+      id: alumniCredential.id, deleteBundle: false, force: true
+    });
+    should.exist(result);
+    result.should.have.keys(['deleted', 'doc', 'bundle']);
+    should.exist(result.deleted);
+    result.deleted.should.equal(true);
+    should.exist(result.doc);
+    result.doc.should.be.an('object');
+    should.exist(result.doc.content);
+    result.doc.content.should.deep.equal(alumniCredential);
+    should.not.exist(result.bundle);
+  });
 });
 
 function _deepClone(x) {

@@ -5,9 +5,10 @@ import credentials from './credentials.js';
 import {EdvClient} from '@digitalbazaar/edv-client';
 import mock from './mock.js';
 import {queryWithMatchingTrustedIssuer} from './query.js';
+import uuid from 'uuid-random';
 import {VerifiableCredentialStore} from 'bedrock-web-vc-store';
 
-const {AlumniCredential} = credentials;
+const {alumniCredential} = credentials;
 
 describe('VerifiableCredentialStore', () => {
   before(async () => {
@@ -37,30 +38,30 @@ describe('VerifiableCredentialStore', () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    const doc = await vcStore.insert({credential: AlumniCredential});
+    const doc = await vcStore.insert({credential: alumniCredential});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should get a credential', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
-    const doc = await vcStore.get({id: AlumniCredential.id});
+    await vcStore.insert({credential: alumniCredential});
+    const doc = await vcStore.get({id: alumniCredential.id});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should find a credential using a string for type', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
     const type = 'AlumniCredential';
     const result = await vcStore.find({query: {type}});
     result.should.be.an('object');
@@ -70,14 +71,14 @@ describe('VerifiableCredentialStore', () => {
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should find a credential using an array for type', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
     const type = ['AlumniCredential', 'VerifiableCredential'];
     const query = type.map(type => ({type}));
 
@@ -85,14 +86,14 @@ describe('VerifiableCredentialStore', () => {
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should fail to find a credential for a non-existent type', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
     const type = 'KingCredential';
     const {documents} = await vcStore.find({query: {type}});
     documents.length.should.equal(0);
@@ -102,20 +103,20 @@ describe('VerifiableCredentialStore', () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
     const issuer = 'https://example.edu/issuers/565049';
     const {documents: [doc]} = await vcStore.find({query: {issuer}});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should fail to find a credential for a non-existent issuer', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
     const issuer = 'did:example:1234';
     const {documents} = await vcStore.find({query: {issuer}});
     documents.length.should.equal(0);
@@ -126,9 +127,9 @@ describe('VerifiableCredentialStore', () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
 
-    const newCred = {...AlumniCredential, id: 'foo'};
+    const newCred = {...alumniCredential, id: 'foo'};
     await vcStore.insert({credential: newCred});
 
     // this is a VPR query
@@ -154,8 +155,8 @@ describe('VerifiableCredentialStore', () => {
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     // insert VCs
-    await vcStore.insert({credential: AlumniCredential});
-    const newCred = {...AlumniCredential, id: 'foo'};
+    await vcStore.insert({credential: alumniCredential});
+    const newCred = {...alumniCredential, id: 'foo'};
     await vcStore.insert({credential: newCred});
 
     // this is a VPR query
@@ -181,7 +182,7 @@ describe('VerifiableCredentialStore', () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
 
     // convert VPR query into local queries
     const {queries} = await vcStore.convertVPRQuery({
@@ -193,7 +194,7 @@ describe('VerifiableCredentialStore', () => {
       queries.map(async query => vcStore.find({query})));
     results[0].documents.length.should.equal(1);
     const {content: credential} = results[0].documents[0];
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should find credential when querying for an AlumniCredential ' +
@@ -201,7 +202,7 @@ describe('VerifiableCredentialStore', () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
 
     // this is a VPR query
     const queryWithoutTrustedIssuer =
@@ -218,24 +219,24 @@ describe('VerifiableCredentialStore', () => {
       queries.map(async query => vcStore.find({query})));
     results[0].documents.length.should.equal(1);
     const {content: credential} = results[0].documents[0];
-    credential.should.deep.equal(AlumniCredential);
+    credential.should.deep.equal(alumniCredential);
   });
 
   it('should delete an existing credential', async () => {
     // first insert VC
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
-    await vcStore.insert({credential: AlumniCredential});
+    await vcStore.insert({credential: alumniCredential});
 
     // then delete VC
-    const result = await vcStore.delete({id: AlumniCredential.id});
+    const result = await vcStore.delete({id: alumniCredential.id});
     result.should.be.an('object');
     result.should.have.keys(['deleted', 'doc', 'bundle']);
     result.deleted.should.equal(true);
     result.doc.should.be.an('object');
     let err;
     try {
-      await vcStore.get({id: AlumniCredential.id});
+      await vcStore.get({id: alumniCredential.id});
     } catch(e) {
       err = e;
     }
@@ -246,9 +247,71 @@ describe('VerifiableCredentialStore', () => {
   it('should fail to delete a non-existent credential', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
-    const result = await vcStore.delete({id: AlumniCredential.id});
+    const result = await vcStore.delete({id: alumniCredential.id});
     result.should.be.an('object');
     result.should.have.keys(['deleted', 'doc', 'bundle']);
     result.deleted.should.equal(false);
   });
+
+  it('should fail to insert non-array bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+    let err;
+    try {
+      await vcStore.insert({
+        credential: alumniCredential,
+        bundleContents: false
+      });
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('TypeError');
+  });
+
+  it('should fail to insert non-array of objects bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+    let err;
+    try {
+      await vcStore.insert({
+        credential: alumniCredential,
+        bundleContents: [false]
+      });
+    } catch(e) {
+      err = e;
+    }
+    should.exist(err);
+    err.name.should.equal('TypeError');
+  });
+
+  it('should insert a bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+    const bundleContents = [{
+      credential: subCredential
+    }];
+
+    const doc = await vcStore.insert({
+      credential: alumniCredential,
+      bundleContents
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+  });
 });
+
+function _deepClone(x) {
+  return JSON.parse(JSON.stringify(x));
+}
+
+function _newId() {
+  return `urn:uuid:${uuid()}`;
+}

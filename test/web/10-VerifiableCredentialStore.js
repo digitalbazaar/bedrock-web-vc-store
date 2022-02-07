@@ -392,6 +392,50 @@ describe('VerifiableCredentialStore', () => {
     should.not.exist(subDoc.meta.dependent);
   });
 
+  it('should get a bundle', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const subCredential = {
+      ..._deepClone(alumniCredential),
+      id: _newId()
+    };
+
+    const doc = await vcStore.upsert({
+      credential: alumniCredential,
+      bundleContents: [{
+        credential: subCredential
+      }]
+    });
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential} = doc;
+    credential.should.deep.equal(alumniCredential);
+
+    const result = await vcStore.getBundle({id: doc.content.id});
+    should.exist(result);
+    result.should.have.keys(['doc', 'bundle', 'allSubDocuments']);
+    should.exist(result.doc);
+    result.doc.should.be.an('object');
+    should.exist(result.doc.content);
+    result.doc.content.should.deep.equal(alumniCredential);
+    should.exist(result.bundle);
+    result.bundle.should.be.an('object');
+    result.bundle.should.have.keys(['id', 'contents']);
+    should.exist(result.bundle.id);
+    result.bundle.id.should.equal(doc.content.id);
+    should.exist(result.bundle.contents);
+    result.bundle.contents.should.be.an('array');
+    result.bundle.contents.length.should.equal(1);
+    should.exist(result.bundle.contents[0]);
+    result.bundle.contents[0].should.be.an('object');
+    result.bundle.contents[0].should.have.keys(['doc']);
+    should.exist(result.bundle.contents[0].doc);
+    result.bundle.contents[0].doc.should.be.an('object');
+    should.exist(result.bundle.contents[0].doc.content);
+    result.bundle.contents[0].doc.content.should.deep.equal(subCredential);
+  });
+
   it('should delete a bundle', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});

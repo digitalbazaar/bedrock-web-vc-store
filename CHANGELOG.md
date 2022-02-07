@@ -10,6 +10,12 @@
 - Add indexes on `meta.displayable`, `meta.bundledBy`, and `content.type` to
   enable more queries.
 - Add `upsert()` API for updating credentials based on `id`.
+- Add the ability to insert credential "bundles". A credential bundle is a
+  credential that "bundles" other credentials, creating meta data links
+  between them such that if the credential bundle is deleted, the other
+  credentials may be deleted as well. Credentials can be marked as "dependent"
+  on the other credentials that bundle them, such that they will be deleted
+  if all bundling credentials are also deleted.
 
 ### Changed
 - **BREAKING**: The constructor for a `VerifiableCredentialStore` only

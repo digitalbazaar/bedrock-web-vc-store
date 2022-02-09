@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 6.0.0 - 2022-02-xx
+## 6.0.0 - 2022-02-09
 
 ### Added
 - Add `convertVPRQuery` helper to convert VPR queries into local queries that

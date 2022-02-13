@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 6.0.2 - 2022-02-xx
+## 6.0.2 - 2022-02-13
 
 ### Fixed
 - Force `mutator` to be `false` not just falsey to avoid bugs.

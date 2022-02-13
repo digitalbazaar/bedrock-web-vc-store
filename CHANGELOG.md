@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 6.0.1 - 2022-02-xx
+
+### Fixed
+- Fix allowing falsey `mutator` option.
+
 ## 6.0.0 - 2022-02-09
 
 ### Added

@@ -84,7 +84,6 @@ export class MockStorage {
       const {controller, referenceId} = request.queryParams;
       if(!referenceId) {
         // query for all edvs controlled by controller not implemented yet
-        // TODO: implement
         return [500, undefined, new Error('Not implemented.')];
       }
       const key = _getReferenceKey(controller, referenceId);

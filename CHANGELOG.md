@@ -1,5 +1,11 @@
 # bedrock-web-vc-store ChangeLog
 
+## 7.0.0 - 2022-04-xx
+
+### Changed
+- **BREAKING**: Rename package to `@bedrock/web-vc-store`.
+- **BREAKING**: Convert to module (ESM).
+
 ## 6.0.2 - 2022-02-13
 
 ### Fixed

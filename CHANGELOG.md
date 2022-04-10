@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 7.0.0 - 2022-04-xx
+## 7.0.0 - 2022-04-10
 
 ### Changed
 - **BREAKING**: Rename package to `@bedrock/web-vc-store`.

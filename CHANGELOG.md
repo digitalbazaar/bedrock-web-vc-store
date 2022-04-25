@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.0.0 - 2022-xx-xx
+
+### Changed
+- **BREAKING**: Use `exports` instead of `module`.
+
 ## 7.4.0 - 2022-08-11
 
 ### Added

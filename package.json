@@ -2,7 +2,7 @@
   "name": "@bedrock/web-vc-store",
   "version": "7.4.1-0",
   "description": "A Javascript library for storing Verifiable Credentials for Bedrock web apps.",
-  "module": "./lib/index.js",
+  "exports": "./lib/index.js",
   "scripts": {
     "lint": "eslint ."
   },

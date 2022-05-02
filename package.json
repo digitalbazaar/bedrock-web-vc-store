@@ -2,7 +2,11 @@
   "name": "@bedrock/web-vc-store",
   "version": "7.4.1-0",
   "description": "A Javascript library for storing Verifiable Credentials for Bedrock web apps.",
+  "type": "module",
   "exports": "./lib/index.js",
+  "files": [
+    "lib/*"
+  ],
   "scripts": {
     "lint": "eslint ."
   },
@@ -20,9 +24,6 @@
     "url": "https://github.com/digitalbazaar/bedrock-web-vc-store/issues",
     "email": "support@digitalbazaar.com"
   },
-  "files": [
-    "lib/*"
-  ],
   "dependencies": {
     "@digitalbazaar/lru-memoize": "^2.2.0",
     "canonicalize": "^1.0.8",

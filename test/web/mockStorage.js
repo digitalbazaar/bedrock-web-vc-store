@@ -1,7 +1,7 @@
 /*!
  * Copyright (c) 2020-2022 Digital Bazaar, Inc. All rights reserved.
  */
-import uuid from 'uuid-random';
+import {v4 as uuid} from 'uuid';
 
 export class MockStorage {
   constructor({server}) {

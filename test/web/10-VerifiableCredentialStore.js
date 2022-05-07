@@ -5,7 +5,7 @@ import credentials from './credentials.js';
 import {EdvClient} from '@digitalbazaar/edv-client';
 import mock from './mock.js';
 import {queryWithMatchingTrustedIssuer} from './query.js';
-import uuid from 'uuid-random';
+import {v4 as uuid} from 'uuid';
 import {VerifiableCredentialStore} from '@bedrock/web-vc-store';
 
 const {alumniCredential} = credentials;

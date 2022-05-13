@@ -37,9 +37,9 @@
     "Linked Data"
   ],
   "devDependencies": {
-    "eslint": "^8.14.0",
+    "eslint": "^8.15.0",
     "eslint-config-digitalbazaar": "^3.0.0",
-    "eslint-plugin-jsdoc": "^39.2.8",
+    "eslint-plugin-jsdoc": "^39.2.9",
     "eslint-plugin-unicorn": "^42.0.0",
     "jsdoc": "^3.6.10",
     "jsdoc-to-markdown": "^7.1.1"

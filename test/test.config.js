@@ -12,8 +12,9 @@ config.karma.suites['bedrock-web-vc-store'] = path.join('web', '**', '*.js');
 // errors with dated bedrock-karma and features like spread operator
 config.karma.defaults.DEFAULT_PREPROCESSORS = ['webpack'];
 
+// polyfills
+// route-params > pathname-match > assert > util > process
 config.karma.config.webpack.plugins.push(
-  // pathname-match > assert > util > process
   new webpack.ProvidePlugin({
     process: 'process'
   }));

@@ -378,6 +378,7 @@ describe('VerifiableCredentialStore', () => {
         credential: subCredential
       }]
     });
+    should.exist(doc);
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential} = doc;
@@ -387,7 +388,10 @@ describe('VerifiableCredentialStore', () => {
     // independent
     const subDoc = await vcStore.get({id: subCredential.id});
     should.exist(subDoc);
+    subDoc.should.include.keys(['content', 'meta']);
+    should.exist(subDoc.content.id);
     subDoc.content.id.should.equal(subCredential.id);
+    should.exist(subDoc.meta.special);
     subDoc.meta.special.should.equal(true);
     should.not.exist(subDoc.meta.dependent);
   });

@@ -138,7 +138,7 @@ export class MockStorage {
       }
 
       try {
-        this.store({edv, doc, create: true});
+        this.store({edv, doc});
       } catch(e) {
         return [409, undefined];
       }
@@ -215,22 +215,23 @@ export class MockStorage {
     });
   }
 
-  store({edv, doc, create = false}) {
-    if(create) {
-      // check uniqueness constraint
-      for(const entry of doc.indexed) {
-        const index = edv.indexes.get(entry.hmac.id);
-        if(!index) {
+  store({edv, doc}) {
+    // check uniqueness constraint
+    for(const entry of doc.indexed) {
+      const index = edv.indexes.get(entry.hmac.id);
+      if(!index) {
+        continue;
+      }
+      for(const attribute of entry.attributes) {
+        if(!attribute.unique) {
           continue;
         }
-        for(const attribute of entry.attributes) {
-          if(!attribute.unique) {
-            continue;
-          }
-          const key = attribute.name + '=' + attribute.value;
-          if(index.equals.has(key)) {
-            throw new Error('Duplicate error.');
-          }
+        const key = attribute.name + '=' + attribute.value;
+        const docSet = index.equals.get(key);
+        if(docSet && !docSet.has(edv.documents.get(doc.id))) {
+          const err = new Error('Duplicate error.');
+          err.name = 'DuplicateError';
+          throw err;
         }
       }
     }

@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 7.1.0 - 2022-05-xx
+## 7.1.0 - 2022-05-20
 
 ### Added
 - Add credential cache that can be used via `useCache: true` on `get()`.

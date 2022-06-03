@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 7.3.0 - 2022-06-xx
+## 7.3.0 - 2022-06-03
 
 ### Added
 - Add `addBundleContentsFirst` option to allow control of when bundle

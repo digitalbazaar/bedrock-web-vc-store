@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 7.2.0 - 2022-06-xx
+
+### Added
+- Add `created` and `updated` dates in meta to stored VC docs.
+
 ## 7.1.0 - 2022-05-20
 
 ### Added

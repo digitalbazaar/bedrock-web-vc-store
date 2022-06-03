@@ -41,8 +41,12 @@ describe('VerifiableCredentialStore', () => {
     const doc = await vcStore.insert({credential: alumniCredential});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should get a credential', async () => {
@@ -53,8 +57,12 @@ describe('VerifiableCredentialStore', () => {
     const doc = await vcStore.get({id: alumniCredential.id});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should find a credential using a string for type', async () => {
@@ -70,8 +78,12 @@ describe('VerifiableCredentialStore', () => {
     const [doc] = result.documents;
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should find a credential using an array for type', async () => {
@@ -85,8 +97,12 @@ describe('VerifiableCredentialStore', () => {
     const {documents: [doc]} = await vcStore.find({query});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should fail to find a credential for a non-existent type', async () => {
@@ -108,8 +124,12 @@ describe('VerifiableCredentialStore', () => {
     const {documents: [doc]} = await vcStore.find({query: {issuer}});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should fail to find a credential for a non-existent issuer', async () => {
@@ -193,8 +213,12 @@ describe('VerifiableCredentialStore', () => {
     const results = await Promise.all(
       queries.map(async query => vcStore.find({query})));
     results[0].documents.length.should.equal(1);
-    const {content: credential} = results[0].documents[0];
+    const {content: credential, meta} = results[0].documents[0];
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should find credential when querying for an AlumniCredential ' +
@@ -218,8 +242,12 @@ describe('VerifiableCredentialStore', () => {
     const results = await Promise.all(
       queries.map(async query => vcStore.find({query})));
     results[0].documents.length.should.equal(1);
-    const {content: credential} = results[0].documents[0];
+    const {content: credential, meta} = results[0].documents[0];
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should delete an existing credential', async () => {
@@ -302,8 +330,12 @@ describe('VerifiableCredentialStore', () => {
     });
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should fail to upsert non-array bundle', async () => {
@@ -355,8 +387,12 @@ describe('VerifiableCredentialStore', () => {
     });
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
-    const {content: credential} = doc;
+    const {content: credential, meta} = doc;
     credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
   });
 
   it('should upsert a bundle that mutates an existing VC', async () => {
@@ -370,6 +406,9 @@ describe('VerifiableCredentialStore', () => {
 
     // upsert `subCredential` first
     await vcStore.upsert({credential: subCredential, meta: {special: true}});
+
+    // wait for time to change
+    await new Promise(r => setTimeout(r, 1));
 
     // now create bundle that includes previously existing `subCredential`
     const doc = await vcStore.upsert({
@@ -394,6 +433,12 @@ describe('VerifiableCredentialStore', () => {
     should.exist(subDoc.meta.special);
     subDoc.meta.special.should.equal(true);
     should.not.exist(subDoc.meta.dependent);
+    // confirm `meta.created` is before `meta.updated`
+    should.exist(subDoc.meta.created);
+    should.exist(subDoc.meta.updated);
+    subDoc.meta.created.should.be.a('number');
+    subDoc.meta.updated.should.be.a('number');
+    subDoc.meta.created.should.be.lessThan(subDoc.meta.updated);
   });
 
   it('should get a bundle', async () => {

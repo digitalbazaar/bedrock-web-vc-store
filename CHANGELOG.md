@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 7.3.2 - 2022-06-xx
+## 7.3.2 - 2022-06-03
 
 ### Fixed
 - Fix aggregate error check.

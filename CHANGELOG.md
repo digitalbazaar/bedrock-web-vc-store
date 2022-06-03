@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 7.3.1 - 2022-06-xx
+
+### Fixed
+- Allow for aggregate error without `.errors` field properly set.
+
 ## 7.3.0 - 2022-06-03
 
 ### Added

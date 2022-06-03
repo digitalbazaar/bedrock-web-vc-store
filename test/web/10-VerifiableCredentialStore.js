@@ -281,9 +281,20 @@ describe('VerifiableCredentialStore', () => {
     result.deleted.should.equal(false);
   });
 
+  const storeOptions = {
+    defaults: {},
+    'addBundleContentsFirst=false': {addBundleContentsFirst: false},
+    'addBundleContentsFirst=true': {addBundleContentsFirst: true}
+  };
+  for(const [name, storeOption] of Object.entries(storeOptions)) {
+    describe(`bundles with ${name}`, () => _addBundleTests(storeOption));
+  }
+});
+
+function _addBundleTests(storeOption) {
   it('should fail to insert non-array bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
     let err;
     try {
       await vcStore.insert({
@@ -299,7 +310,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to insert non-array of objects bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
     let err;
     try {
       await vcStore.insert({
@@ -315,7 +326,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should insert a bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -340,7 +351,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to upsert non-array bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
     let err;
     try {
       await vcStore.upsert({
@@ -356,7 +367,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to upsert non-array of objects bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
     let err;
     try {
       await vcStore.upsert({
@@ -372,7 +383,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should upsert a bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -397,7 +408,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should upsert a bundle that mutates an existing VC', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -443,7 +454,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should get a bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -487,7 +498,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should delete a bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -543,7 +554,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should delete a bundle w/ preserve independent contents', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -596,7 +607,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should delete a bundle w/ preserve pre-existing contents', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -648,7 +659,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should delete a bundle w/ preserve other bundled contents', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -724,7 +735,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to delete a member of an existing bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -757,7 +768,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should force delete a member of an existing bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -804,7 +815,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to delete a credential w/o its bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -836,7 +847,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should force delete a credential w/o its bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subCredential = {
       ..._deepClone(alumniCredential),
@@ -885,7 +896,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should upsert a deep bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subSubCredential = {
       ..._deepClone(alumniCredential),
@@ -914,7 +925,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should delete a deep bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subSubCredential = {
       ..._deepClone(alumniCredential),
@@ -1004,7 +1015,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should fail to delete a deep member of an existing bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subSubCredential = {
       ..._deepClone(alumniCredential),
@@ -1045,7 +1056,7 @@ describe('VerifiableCredentialStore', () => {
 
   it('should force delete a deep member of an existing bundle', async () => {
     const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
+    const vcStore = new VerifiableCredentialStore({edvClient, ...storeOption});
 
     const subSubCredential = {
       ..._deepClone(alumniCredential),
@@ -1102,7 +1113,7 @@ describe('VerifiableCredentialStore', () => {
     should.exist(err);
     err.name.should.equal('NotFoundError');
   });
-});
+}
 
 function _deepClone(x) {
   return JSON.parse(JSON.stringify(x));

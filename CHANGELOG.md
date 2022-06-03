@@ -1,5 +1,14 @@
 # bedrock-web-vc-store ChangeLog
 
+## 7.3.0 - 2022-06-xx
+
+### Added
+- Add `addBundleContentsFirst` option to allow control of when bundle
+  contents are inserted / upserted relative to the bundling VC. By
+  default (and for backwards compatibility) this flag is set to
+  `false`. A future breaking version may set it to `true` by default
+  if it proves to be a better option most of the time.
+
 ## 7.2.0 - 2022-06-03
 
 ### Added

@@ -1,8 +1,8 @@
 /*!
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
-import crypto from 'isomorphic-webcrypto';
 import * as base64url from 'base64url-universal';
+import crypto from 'isomorphic-webcrypto';
 
 const _secret = base64url.decode(
   '49JUNpuy7808NoTTbB0q8rgRuPSMyeqSswCnWKr0MF4');

@@ -4,6 +4,7 @@
 
 ### Changed
 - **BREAKING**: Use `exports` instead of `module`.
+- **BREAKING**: Require Web Crypto API exists for testing.
 - Update dependencies.
 - Lint module.
 

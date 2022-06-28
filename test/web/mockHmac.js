@@ -2,7 +2,6 @@
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import * as base64url from 'base64url-universal';
-import crypto from 'isomorphic-webcrypto';
 
 const _secret = base64url.decode(
   '49JUNpuy7808NoTTbB0q8rgRuPSMyeqSswCnWKr0MF4');
@@ -21,7 +20,7 @@ export class MockHmac {
     const type = 'Sha256HmacKey2019';
     const algorithm = 'HS256';
     const extractable = true;
-    const key = await crypto.subtle.importKey(
+    const key = await globalThis.crypto.subtle.importKey(
       'raw', data, {name: 'HMAC', hash: {name: 'SHA-256'}}, extractable,
       ['sign', 'verify']);
     const hmac = new MockHmac({id, type, algorithm, key});

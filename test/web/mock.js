@@ -5,8 +5,8 @@ import * as didKey from '@digitalbazaar/did-method-key';
 import {Ed25519Signature2020} from '@digitalbazaar/ed25519-signature-2020';
 import {EdvClient} from '@digitalbazaar/edv-client';
 import {MockHmac} from './mockHmac.js';
-import {MockStorage} from './mockStorage.js';
 import {MockServer} from './mockServer.js';
+import {MockStorage} from './mockStorage.js';
 import {securityLoader} from '@digitalbazaar/security-document-loader';
 
 const loader = securityLoader();

@@ -26,7 +26,8 @@
   "dependencies": {
     "@digitalbazaar/lru-memoize": "^2.2.0",
     "canonicalize": "^1.0.8",
-    "p-all": "^3.0.0"
+    "p-all": "^3.0.0",
+    "uuid": "^8.3.2"
   },
   "keywords": [
     "Verifiable",

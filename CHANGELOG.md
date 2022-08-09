@@ -1,5 +1,14 @@
 # bedrock-web-vc-store ChangeLog
 
+## 7.4.0 - 2022-08-xx
+
+### Added
+- Add support for credentials without an `id` property. A new index
+  on a new credential record property, `meta.id`, will be created and
+  the `meta.id` property will be populated for all newly inserted or
+  updated credentials. The `meta.id` property will be set to the
+  `credential.id` value if present and a new UUID URN if not.
+
 ## 7.3.2 - 2022-06-03
 
 ### Fixed

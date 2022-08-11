@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 7.4.0 - 2022-08-xx
+## 7.4.0 - 2022-08-11
 
 ### Added
 - Add support for credentials without an `id` property. A new index

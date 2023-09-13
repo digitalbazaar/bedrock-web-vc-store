@@ -69,7 +69,7 @@ describe('VerifiableCredentialStore', () => {
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     await vcStore.insert({credential: alumniCredential});
-    await vcStore.upsert({credential: refreshedCredential, mutator: false})
+    await vcStore.upsert({credential: refreshedCredential, mutator: false});
     const doc = await vcStore.get({id: alumniCredential.id});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
@@ -81,13 +81,14 @@ describe('VerifiableCredentialStore', () => {
     meta.updated.should.be.a('number');
   });
 
-  it('should not overwrite an existing credential with default mutator', async () => {
+  it('should not overwrite an existing credential with default mutator' +
+    '', async () => {
     const {edvClient} = await mock.createEdv();
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     await vcStore.insert({credential: alumniCredential});
     // will log an error to console, but not throw
-    await vcStore.upsert({credential: refreshedCredential})
+    await vcStore.upsert({credential: refreshedCredential});
     const doc = await vcStore.get({id: alumniCredential.id});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);

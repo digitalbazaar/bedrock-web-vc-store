@@ -1,5 +1,11 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.0.1 - 2023-09-xx
+
+### Fixed
+- Ensure `meta` is spread when overwriting without mutator
+  on upsert.
+
 ## 8.0.0 - 2022-08-19
 
 ### Changed

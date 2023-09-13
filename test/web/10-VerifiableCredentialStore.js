@@ -8,7 +8,7 @@ import {queryWithMatchingTrustedIssuer} from './query.js';
 import {v4 as uuid} from 'uuid';
 import {VerifiableCredentialStore} from '@bedrock/web-vc-store';
 
-const {alumniCredential} = credentials;
+const {alumniCredential, refreshedCredential} = credentials;
 
 describe('VerifiableCredentialStore', () => {
   before(async () => {
@@ -39,6 +39,56 @@ describe('VerifiableCredentialStore', () => {
     const vcStore = new VerifiableCredentialStore({edvClient});
 
     const doc = await vcStore.insert({credential: alumniCredential});
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential, meta} = doc;
+    credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
+  });
+
+  it('should upsert a credential', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    const doc = await vcStore.upsert({credential: alumniCredential});
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential, meta} = doc;
+    credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
+  });
+
+  it('should overwrite an existing credential', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    await vcStore.insert({credential: alumniCredential});
+    await vcStore.upsert({credential: refreshedCredential, mutator: false})
+    const doc = await vcStore.get({id: alumniCredential.id});
+    doc.should.be.an('object');
+    doc.should.include.keys(['content', 'meta']);
+    const {content: credential, meta} = doc;
+    credential.should.deep.equal(refreshedCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
+  });
+
+  it('should not overwrite an existing credential with default mutator', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    await vcStore.insert({credential: alumniCredential});
+    // will log an error to console, but not throw
+    await vcStore.upsert({credential: refreshedCredential})
+    const doc = await vcStore.get({id: alumniCredential.id});
     doc.should.be.an('object');
     doc.should.include.keys(['content', 'meta']);
     const {content: credential, meta} = doc;

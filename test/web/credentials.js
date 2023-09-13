@@ -24,6 +24,8 @@ const alumniCredential = {
   "issuer": "https://example.edu/issuers/565049",
   // when the credential was issued
   "issuanceDate": "2010-01-01T19:73:24Z",
+  // when the credential expires
+  "expirationDate": "2022-01-01T19:23:24Z",
   // claims about the subjects of the credential
   "credentialSubject": {
     // identifier for the only subject of the credential
@@ -43,6 +45,12 @@ const alumniCredential = {
   }
 };
 
+const refreshedCredential = {
+  ...alumniCredential,
+  "expirationDate": "2027-06-14T18:37:12Z"
+};
+
 export default {
-  alumniCredential
+  alumniCredential,
+  refreshedCredential
 };

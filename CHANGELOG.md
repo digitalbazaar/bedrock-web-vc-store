@@ -1,5 +1,12 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.1.0 - 2023-10-TBD
+
+### Changed
+- Add `engines` to `package.json`.
+- Use `canonicalize@2`. This version adds error handling for illegal numeric
+  values: Infinite and NaN.
+
 ## 8.0.1 - 2023-09-13
 
 ### Fixed

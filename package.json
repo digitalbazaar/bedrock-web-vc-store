@@ -1,6 +1,6 @@
 {
   "name": "@bedrock/web-vc-store",
-  "version": "9.0.0",
+  "version": "9.0.1-0",
   "description": "A Javascript library for storing Verifiable Credentials for Bedrock web apps.",
   "type": "module",
   "exports": "./lib/index.js",

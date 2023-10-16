@@ -1,9 +1,9 @@
 # bedrock-web-vc-store ChangeLog
 
-## 8.1.0 - 2023-10-TBD
+## 9.0.0 - 2023-10-TBD
 
 ### Changed
-- Add `engines` to `package.json`.
+- **BREAKING**: Drop support for Node.js < 18.
 - Use `canonicalize@2`. This version adds error handling for illegal numeric
   values: Infinite and NaN.
 

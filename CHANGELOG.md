@@ -1,5 +1,11 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.1.0 - 2025-mm-dd
+
+### Changed
+- Update dependencies:
+  - Use `@digitalbazaar/lru-memoize@4`.
+
 ## 8.0.1 - 2023-09-13
 
 ### Fixed

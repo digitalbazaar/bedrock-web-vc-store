@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 8.1.0 - 2025-mm-dd
+## 8.1.0 - 2025-09-11
 
 ### Changed
 - Update dependencies:

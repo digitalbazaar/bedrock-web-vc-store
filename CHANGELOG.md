@@ -1,5 +1,13 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.2.0 - 2025-09-dd
+
+### Changed
+- Improve EDV doc caching. EDV docs referenced in `.find()` results will now
+  be retrieved using separate (and HTTP-cacheable) requests. The EDV docs
+  will be cached locally in memory and, if applicable and supported by the
+  browser, in an HTTP cache.
+
 ## 8.1.0 - 2025-09-11
 
 ### Changed

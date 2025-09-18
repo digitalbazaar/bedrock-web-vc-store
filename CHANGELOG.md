@@ -1,6 +1,6 @@
 # bedrock-web-vc-store ChangeLog
 
-## 8.2.0 - 2025-09-dd
+## 8.2.0 - 2025-09-18
 
 ### Changed
 - Improve EDV doc caching. EDV docs referenced in `.find()` results will now

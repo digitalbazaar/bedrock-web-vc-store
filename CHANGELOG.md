@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.3.0 - 2025-09-dd
+
+### Changed
+- Replace `uuid` library with built-in `crypto.randomUUID`.
+
 ## 8.2.0 - 2025-09-18
 
 ### Changed

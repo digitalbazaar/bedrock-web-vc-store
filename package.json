@@ -27,8 +27,7 @@
   "dependencies": {
     "@digitalbazaar/lru-memoize": "^4.0.0",
     "canonicalize": "^1.0.8",
-    "p-all": "^4.0.0",
-    "uuid": "^8.3.2"
+    "p-all": "^4.0.0"
   },
   "keywords": [
     "Verifiable",
@@ -37,11 +36,9 @@
     "Linked Data"
   ],
   "devDependencies": {
-    "eslint": "^8.18.0",
+    "eslint": "^8.57.1",
     "eslint-config-digitalbazaar": "^4.0.1",
-    "eslint-plugin-jsdoc": "^39.3.3",
-    "eslint-plugin-unicorn": "^43.0.2",
-    "jsdoc": "^3.6.10",
-    "jsdoc-to-markdown": "^7.1.1"
+    "eslint-plugin-jsdoc": "^50.8.0",
+    "eslint-plugin-unicorn": "^56.0.1"
   }
 }

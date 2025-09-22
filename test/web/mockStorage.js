@@ -1,8 +1,6 @@
 /*!
- * Copyright (c) 2020-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2020-2025 Digital Bazaar, Inc. All rights reserved.
  */
-import {v4 as uuid} from 'uuid';
-
 export class MockStorage {
   constructor({server}) {
     this.edvs = new Map();
@@ -59,7 +57,7 @@ export class MockStorage {
     server.post(routes.edvs, request => {
       const config = JSON.parse(request.requestBody);
 
-      config.id = `${baseUrl}${root}/${uuid()}`;
+      config.id = `${baseUrl}${root}/${crypto.randomUUID()}`;
       const edv = {
         config,
         documents: new Map(),

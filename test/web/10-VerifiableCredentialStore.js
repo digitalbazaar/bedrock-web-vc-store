@@ -1,11 +1,10 @@
 /*!
- * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2025 Digital Bazaar, Inc. All rights reserved.
  */
 import credentials from './credentials.js';
 import {EdvClient} from '@digitalbazaar/edv-client';
 import mock from './mock.js';
 import {queryWithMatchingTrustedIssuer} from './query.js';
-import {v4 as uuid} from 'uuid';
 import {VerifiableCredentialStore} from '@bedrock/web-vc-store';
 
 const {alumniCredential, refreshedCredential} = credentials;
@@ -1171,5 +1170,5 @@ function _deepClone(x) {
 }
 
 function _newId() {
-  return `urn:uuid:${uuid()}`;
+  return `urn:uuid:${crypto.randomUUID()}`;
 }

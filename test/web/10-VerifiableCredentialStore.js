@@ -1,10 +1,10 @@
 /*!
- * Copyright (c) 2019-2025 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2026 Digital Bazaar, Inc.
  */
 import credentials from './credentials.js';
 import {EdvClient} from '@digitalbazaar/edv-client';
 import mock from './mock.js';
-import {queryWithMatchingTrustedIssuer} from './query.js';
+import {queryWithMatchingAcceptedIssuers} from './query.js';
 import {VerifiableCredentialStore} from '@bedrock/web-vc-store';
 
 const {alumniCredential, refreshedCredential} = credentials;
@@ -203,48 +203,21 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: newCred});
 
     // this is a VPR query
-    const queryWithNonMatchingTrustedIssuer =
-      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
-    // intentionally change the trustedIsser to a non matching one.
-    queryWithNonMatchingTrustedIssuer.credentialQuery[0].trustedIssuer = [{
+    const queryWithNonMatchingAcceptedIssuers = structuredClone(
+      queryWithMatchingAcceptedIssuers);
+    // intentionally change the `acceptedIssuers` to a non matching one.
+    queryWithNonMatchingAcceptedIssuers.credentialQuery.acceptedIssuers = [{
       id: 'urn:some:unmatching:issuer'
     }];
 
     // convert VPR query into local queries
     const {queries} = await vcStore.convertVPRQuery({
-      vprQuery: queryWithNonMatchingTrustedIssuer
+      vprQuery: queryWithNonMatchingAcceptedIssuers
     });
     // run local queries
     const results = await Promise.all(
       queries.map(async query => vcStore.find({query})));
     results[0].documents.length.should.equal(0);
-  });
-
-  it('should throw error if "id" of a trustedIssuer is undefined', async () => {
-    const {edvClient} = await mock.createEdv();
-    const vcStore = new VerifiableCredentialStore({edvClient});
-
-    // insert VCs
-    await vcStore.insert({credential: alumniCredential});
-    const newCred = {...alumniCredential, id: 'foo'};
-    await vcStore.insert({credential: newCred});
-
-    // this is a VPR query
-    const queryWithTrustedIssuerWithoutId =
-      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
-    queryWithTrustedIssuerWithoutId.credentialQuery[0].trustedIssuer = [{}];
-
-    let err;
-    try {
-      await vcStore.convertVPRQuery({
-        vprQuery: queryWithTrustedIssuerWithoutId
-      });
-    } catch(e) {
-      err = e;
-    }
-
-    should.exist(err);
-    err.name.should.equal('NotSupportedError');
   });
 
   it('should find credential when querying for an AlumniCredential ' +
@@ -255,8 +228,38 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: alumniCredential});
 
     // convert VPR query into local queries
+    const queryWithStringAcceptedIssuers = structuredClone(
+      queryWithMatchingAcceptedIssuers);
+    // intentionally change the `acceptedIssuers` to a string value
+    queryWithStringAcceptedIssuers.credentialQuery.acceptedIssuers = [
+      queryWithStringAcceptedIssuers.credentialQuery.acceptedIssuers[0].id
+    ];
     const {queries} = await vcStore.convertVPRQuery({
-      vprQuery: queryWithMatchingTrustedIssuer
+      vprQuery: queryWithStringAcceptedIssuers
+    });
+
+    // run local queries
+    const results = await Promise.all(
+      queries.map(async query => vcStore.find({query})));
+    results[0].documents.length.should.equal(1);
+    const {content: credential, meta} = results[0].documents[0];
+    credential.should.deep.equal(alumniCredential);
+    should.exist(meta.created);
+    should.exist(meta.updated);
+    meta.created.should.be.a('number');
+    meta.updated.should.be.a('number');
+  });
+
+  it('should find credential when querying for an AlumniCredential ' +
+    'with a matching issuer as a string', async () => {
+    const {edvClient} = await mock.createEdv();
+    const vcStore = new VerifiableCredentialStore({edvClient});
+
+    await vcStore.insert({credential: alumniCredential});
+
+    // convert VPR query into local queries
+    const {queries} = await vcStore.convertVPRQuery({
+      vprQuery: queryWithMatchingAcceptedIssuers
     });
 
     // run local queries
@@ -279,13 +282,13 @@ describe('VerifiableCredentialStore', () => {
     await vcStore.insert({credential: alumniCredential});
 
     // this is a VPR query
-    const queryWithoutTrustedIssuer =
-      JSON.parse(JSON.stringify(queryWithMatchingTrustedIssuer));
-    delete queryWithoutTrustedIssuer.credentialQuery[0].trustedIssuer;
+    const queryWithoutAcceptedIssuers = structuredClone(
+      queryWithMatchingAcceptedIssuers);
+    delete queryWithoutAcceptedIssuers.credentialQuery.acceptedIssuers;
 
     // convert VPR query into local queries
     const {queries} = await vcStore.convertVPRQuery({
-      vprQuery: queryWithoutTrustedIssuer
+      vprQuery: queryWithoutAcceptedIssuers
     });
 
     // run local queries

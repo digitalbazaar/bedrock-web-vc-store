@@ -1,9 +1,9 @@
 /*!
- * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2026 Digital Bazaar, Inc.
  */
-const queryWithMatchingTrustedIssuer = {
+const queryWithMatchingAcceptedIssuers = {
   type: 'QueryByExample',
-  credentialQuery: [{
+  credentialQuery: {
     required: true,
     example: {
       '@context': [
@@ -22,16 +22,12 @@ const queryWithMatchingTrustedIssuer = {
       }*/
     },
     // Note: This credential can be self-issued here
-    trustedIssuer: [{
+    acceptedIssuers: [{
       id: 'https://example.edu/issuers/565049'
-    }],
-    /*
-    issuerQuery: [<another query by example for a VC for the
-      issuer if using delegated trust>]
-    */
-  }]
+    }]
+  }
 };
 
 export {
-  queryWithMatchingTrustedIssuer
+  queryWithMatchingAcceptedIssuers
 };

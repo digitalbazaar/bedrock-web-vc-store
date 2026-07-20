@@ -1,5 +1,10 @@
 # bedrock-web-vc-store ChangeLog
 
+## 8.4.0 - 2026-mm-dd
+
+### Added
+- Support matching against `acceptedIssuers` in `QueryByExample` queries.
+
 ## 8.3.0 - 2025-09-21
 
 ### Changed
